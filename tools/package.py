@@ -20,6 +20,11 @@ with ZipFile(target) as archive:
     assert not any("node_modules" in n or "fixtures" in n or "research" in n for n in archive.namelist())
     assert archive.testzip() is None
 sha = hashlib.sha256(target.read_bytes()).hexdigest()
-(dist / "SHA256.txt").write_text(f"{sha}  {target.name}\n", encoding="utf-8")
+checksums = []
+for extension in ("zip", "crx"):
+    artifact = dist / f"BetterFilms-{version}.{extension}"
+    if artifact.exists():
+        checksums.append(f"{hashlib.sha256(artifact.read_bytes()).hexdigest()}  {artifact.name}")
+(dist / "SHA256.txt").write_text("\n".join(checksums) + "\n", encoding="utf-8")
 print(target)
 print(f"{target.stat().st_size:,} bytes; SHA-256 {sha}")

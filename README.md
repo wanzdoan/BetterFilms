@@ -10,6 +10,8 @@ Tiện ích cho **Chrome/Edge** giúp chặn nhảy tab, chuyển hướng ngoà
 2. Mở `chrome://extensions` hoặc `edge://extensions`, bật **Chế độ nhà phát triển**.
 3. Chọn **Tải tiện ích đã giải nén / Load unpacked** → chọn thư mục `BetterFilms` chứa `manifest.json`.
 
+Có thêm bản **CRX3 tự ký** trong Releases. Chrome trên Windows/macOS giới hạn cài CRX ngoài Web Store; khi bị chặn, dùng ZIP theo cách trên. [Quy định của Chrome](https://developer.chrome.com/docs/extensions/how-to/distribute/install-extensions).
+
 ## Sử dụng
 
 Mở website → bấm BetterFilms → **Bảo vệ trang này**. Có thể nhập tên miền thủ công, bật/tắt chặn nhảy tab hoặc TVC, và quản lý từng website ngay trong tiện ích.
@@ -29,6 +31,9 @@ npm ci
 npm test
 npm run check
 npm run package
+npm run package:crx
 ```
 
 Mã extension nằm trong `extension/`; gói cài được tạo trong `dist/`. Kiểm thử tự động dùng DOM và Chrome API giả lập.
+
+Đóng gói CRX cần Chrome. Khóa ký lưu cục bộ trong `.local-keys/`, không đưa lên GitHub; giữ khóa này để các bản CRX sau có cùng ID. Có thể đặt `CHROME_PATH` hoặc `BETTERFILMS_SIGNING_KEY` nếu dùng đường dẫn riêng.

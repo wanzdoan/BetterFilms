@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node --experimental-vm-modules --test tests/*.test.js",
     "check": "node tools/check.js",
-    "package": "python tools/package.py"
+    "package": "python tools/package.py",
+    "package:crx": "node tools/package-crx.js"
   },
   "devDependencies": {
     "jsdom": "26.1.0",
