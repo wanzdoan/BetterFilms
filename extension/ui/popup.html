@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="vi" class="popup-document">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BetterFilms</title><link rel="stylesheet" href="popup.css"><script type="module" src="popup.js"></script></head>
+<body class="popup">
+  <header class="popup-header">
+    <a class="brand" href="options.html" target="_blank" aria-label="BetterFilms"><img src="../icons/128.png" alt="" width="30" height="30"><span>BetterFilms</span></a>
+    <button id="manage" class="manage-button" aria-label="Quản lý website">Quản lý <span id="site-count" class="count">0</span></button>
+  </header>
+  <main>
+    <section class="current-panel" aria-labelledby="current-host">
+      <h1 id="current-host">Đang tải…</h1>
+      <div id="current-status" class="status"><span class="status-dot" aria-hidden="true"></span><span id="status-text">Đang kiểm tra</span></div>
+      <p id="current-description" class="description" hidden></p>
+      <button id="add-current" class="primary" disabled>Bảo vệ trang này</button>
+      <div id="site-actions" class="site-actions" hidden>
+        <button id="pause-current" class="secondary">Tạm dừng</button>
+        <button id="reload-current" class="secondary"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 7a6.3 6.3 0 1 0 .1 5M16 3.5V7h-3.5"/></svg>Tải lại</button>
+      </div>
+    </section>
+    <section id="protections" class="settings-list" aria-label="Bảo vệ website" hidden>
+      <label class="switch-row"><span>Chặn nhảy tab</span><input id="navigation" class="switch" type="checkbox" role="switch" aria-label="Chặn nhảy tab và chuyển hướng"></label>
+      <label class="switch-row"><span>Bỏ qua TVC</span><input id="video" class="switch" type="checkbox" role="switch"></label>
+    </section>
+    <p id="message" class="message" role="status" aria-live="polite" hidden></p>
+    <details class="manual-section" id="manual-section">
+      <summary><span>Thêm tên miền</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 8 3 3 3-3"/></svg></summary>
+      <form id="manual-form"><label for="domain" class="sr-only">Tên miền hoặc URL</label><div class="input-action"><input id="domain" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Tên miền hoặc URL" required><button class="secondary" type="submit">Thêm</button></div></form>
+    </details>
+  </main>
+</body></html>

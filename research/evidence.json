@@ -1,0 +1,30 @@
+[
+  {
+    "file": "tests/fixtures/mflix-popup.js",
+    "source": "https://mflix.store/assets/pu.js",
+    "description": "Decoded popup payload (radix/offset; not executed during decoding)",
+    "sha256": "afeb0abe43a9a416ae2c4754ebfcf527208f596c3c76929e1351d1d47d04f49e",
+    "bytes": 1882
+  },
+  {
+    "file": "tests/fixtures/chophim-module.js",
+    "source": "https://chophim.lol/_next/static/chunks/2ceb5394e21bed6c.js",
+    "description": "Original public advertising module",
+    "sha256": "c3284299b825a4ca508a25822d10b6c0782824fd80df29658a767bde21a47172",
+    "bytes": 57893
+  },
+  {
+    "file": "research/mflix-detail.html",
+    "source": "https://mflix.store/movie/gap-anh-trang-2026.html",
+    "description": "Public HTML snapshot",
+    "sha256": "24e498d2a664cfa4c93ce35f678de4911719b22b2f1b1ffb3e61ae33b311e20c",
+    "bytes": 175773
+  },
+  {
+    "file": "research/mflix-watch.html",
+    "source": "https://mflix.store/movie-watch/gap-anh-trang-2026/1-1.html",
+    "description": "Public watch HTML snapshot",
+    "sha256": "297c30369a390b12d254869344b752c090f9fe75c34c61e4f029dfc994f8198d",
+    "bytes": 257756
+  }
+]

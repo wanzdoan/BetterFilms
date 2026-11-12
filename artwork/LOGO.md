@@ -1,0 +1,9 @@
+# BetterFilms logo
+
+Current asset: `betterfilms-logo-rounded.png`. Original: `betterfilms-logo.png`. Created with the built-in image_gen tool; copied into this project. Runtime icons in `extension/icons/` are resized PNG exports of the rounded asset. The former B monogram is removed.
+
+Corner-edit prompt: preserve the ribbon, its colors and the dark interior; clip the outer canvas into a rounded square with four equal corner radii of about 20% and genuinely transparent outer corners. No redesign, text, border or shadow.
+
+Final prompt:
+
+Use case: logo-brand. Create one finished, original artistic logo symbol for BetterFilms, a refined browser extension for uninterrupted movie viewing. The user specifically rejects letter monograms and literal play-button concepts. Art direction: an elegant single continuous folded ribbon, as if a strip of cinematic light has curled through space, forming an off-axis open loop with a strong, intriguing negative-space center. An asymmetric sculptural silhouette with just three broad expressive folds, graceful tension, carefully balanced visual weight. The symbol should feel like a small piece of modern kinetic sculpture, not a tech security badge. Palette: pale celadon and luminous sea-glass green with subtle silver highlights, against a solid very dark charcoal square background. Tasteful dimensional shading on the ribbon itself, clean and restrained; the silhouette must remain bold and readable at toolbar sizes. The mark should fill roughly 78 percent of the square, centered with even practical margins. Deliver a single square logo asset, straight-on view, crisp edges and immaculate finish. No letters, no wordmark, no typography, no B, no play triangle, no film reel, no clapperboard, no shield, no app mockup, no presentation board, no multiple alternatives, no watermark, no ornament or tiny perforations.

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Website được bảo vệ · BetterFilms</title><link rel="stylesheet" href="style.css"><script type="module" src="options.js"></script></head>
+<body class="options">
+  <aside class="sidebar"><a class="brand" href="options.html"><img class="mark" src="../icons/128.png" width="30" height="30" alt=""><span>BetterFilms</span></a><nav aria-label="Điều hướng"><a href="#websites" aria-current="page">Website được bảo vệ</a><a href="#guide">Cách hoạt động</a></nav><div class="sidebar-foot small faint">Phiên bản 1.1.1<br></div></aside>
+  <div class="workspace"><header class="topbar"><span>Website của bạn</span></header>
+  <main>
+    <section id="websites-view" aria-labelledby="page-title">
+      <div class="title-row"><div><h1 id="page-title">Website được bảo vệ</h1></div><span id="total" class="muted small">0 website</span></div>
+      <form id="manual-form" class="add-panel"><div class="field"><label for="domain">Thêm website</label><div class="input-action"><input id="domain" required autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Nhập tên miền hoặc dán địa chỉ website"><button type="submit" class="primary">Thêm website <span aria-hidden="true">+</span></button></div></div></form>
+      <p id="message" class="message" role="status" aria-live="polite" hidden></p>
+      <div class="list-heading"><h2>Danh sách của bạn</h2><label class="search-label"><span class="sr-only">Tìm tên miền</span><input id="search" type="search" placeholder="Tìm tên miền…"></label></div>
+      <div id="sites" class="site-list" aria-live="polite"></div>
+      <div id="empty" class="empty-state" hidden><svg viewBox="0 0 80 48" aria-hidden="true"><rect x="3" y="7" width="52" height="34" rx="4"/><path d="M3 16h52M12 11h1m4 0h1m5 0h1M61 12h13v18H61m4-12v6m4-6v6"/></svg><h2>Chưa có website nào</h2><p class="muted">Thêm tên miền để bắt đầu.</p><button id="focus-add" class="text-button">Thêm website đầu tiên <span aria-hidden="true">↑</span></button></div>
+      <p id="no-results" class="empty-search muted" hidden>Không có tên miền khớp với tìm kiếm.</p>
+      
+    </section>
+    <section id="guide-view" hidden aria-labelledby="guide-title"><div class="title-row"><div><h1 id="guide-title">Cách hoạt động</h1></div></div>
+      <div class="guide-row"><div><h2>Click vẫn thuộc về bạn</h2><p class="muted">Chặn JavaScript tự mở tab, lớp trong suốt bắt click và điều hướng ra khỏi tên miền được bảo vệ. Liên kết ngoài có nội dung mà bạn chủ động bấm vẫn mở qua BetterFilms.</p></div><div class="explanation"><strong>Website → phim của bạn</strong><p class="small muted">Không tự đưa tab hiện tại sang trang quảng cáo. Nút phát, chọn tập và điều hướng cùng website vẫn hoạt động.</p></div></div>
+      <div class="guide-row"><div><h2>Bỏ qua TVC có căn cứ</h2><p class="muted">Dùng cơ chế hoàn tất TVC đã tìm thấy trên chophim; tự bấm nút bỏ qua quảng cáo của các trình phát được nhận diện.</p></div><div class="explanation"><strong>Phim được giữ nguyên</strong><p class="small muted">Không tua mọi video theo số giây cố định. Quảng cáo ghép thẳng vào phim hoặc TVC không nhận diện được vẫn có thể xuất hiện.</p></div></div>
+      <div class="guide-row"><div><h2>Chỉ ở nơi bạn cho phép</h2><p class="muted">Danh sách ban đầu trống. Thiết lập được lưu cục bộ.</p></div><div class="explanation"><strong>Trình phát khác tên miền</strong><p class="small muted">Nếu video nằm trong iframe khác nguồn, thêm tên miền của trình phát vào danh sách.</p></div></div>
+      <div class="guide-row"><div><h2>Dùng cùng uBlock Origin</h2><p class="muted">BetterFilms không có bộ lọc banner, ảnh hoặc theo dõi. Tiếp tục dùng trình chặn quảng cáo hiện có cho các phần này.</p></div><div class="explanation"><strong>Khi một chức năng bị chặn</strong><p class="small muted">Tạm dừng website và tải lại. Các nút mở tab bằng JavaScript, đăng nhập qua tab mới hoặc chuyển miền tự động có thể cần bước này.</p></div></div>
+    </section>
+  </main></div>
+</body></html>

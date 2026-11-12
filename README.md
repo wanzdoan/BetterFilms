@@ -1,0 +1,34 @@
+# BetterFilms
+
+<img src="extension/icons/128.png" width="80" height="80" alt="Logo BetterFilms">
+
+Tiện ích cho **Chrome/Edge** giúp chặn nhảy tab, chuyển hướng ngoài ý muốn và bỏ qua TVC được nhận diện. Chỉ hoạt động trên những website bạn thêm vào danh sách.
+
+## Cài đặt
+
+1. Tải ZIP ở [bản phát hành mới nhất](https://github.com/wanzdoan/BetterFilms/releases/latest) và giải nén.
+2. Mở `chrome://extensions` hoặc `edge://extensions`, bật **Chế độ nhà phát triển**.
+3. Chọn **Tải tiện ích đã giải nén / Load unpacked** → chọn thư mục `BetterFilms` chứa `manifest.json`.
+
+## Sử dụng
+
+Mở website → bấm BetterFilms → **Bảo vệ trang này**. Có thể nhập tên miền thủ công, bật/tắt chặn nhảy tab hoặc TVC, và quản lý từng website ngay trong tiện ích.
+
+Danh sách ban đầu trống. Quyền website được cấp khi cài; thêm tên miền không hỏi lại. Banner thông thường vẫn nên dùng uBlock Origin.
+
+**Cập nhật:** chép file mới vào đúng thư mục extension cũ rồi bấm **Reload** để giữ danh sách website. Sau đó tải lại trang phim.
+
+## Lưu ý
+
+Không bảo đảm chặn mọi quảng cáo, nhất là quảng cáo ghép thẳng vào phim. Nếu một chức năng bị chặn nhầm, tạm dừng bảo vệ cho website đó. Thiết lập lưu cục bộ, không có telemetry. Chrome/Edge 120 trở lên.
+
+## Phát triển
+
+```sh
+npm ci
+npm test
+npm run check
+npm run package
+```
+
+Mã extension nằm trong `extension/`; gói cài được tạo trong `dist/`. Kiểm thử tự động dùng DOM và Chrome API giả lập.

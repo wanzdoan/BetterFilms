@@ -1,0 +1,10 @@
+node_modules/
+dist/
+__pycache__/
+*.pyc
+*.log
+.env
+.env.*
+.taste-skill/
+research/*.html
+research/phimhdcss/

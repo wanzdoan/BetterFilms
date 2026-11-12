@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "BetterFilms",
+  "version": "1.1.1",
+  "description": "Chặn tab tự bật, chuyển hướng cướp click và bỏ qua TVC trên các website bạn chọn. Danh sách ban đầu trống.",
+  "minimum_chrome_version": "120",
+  "permissions": ["storage", "scripting", "activeTab", "declarativeNetRequest", "webNavigation"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_popup": "ui/popup.html", "default_title": "BetterFilms", "default_icon": { "16": "icons/16.png", "32": "icons/32.png" } },
+  "options_page": "ui/options.html",
+  "icons": { "16": "icons/16.png", "32": "icons/32.png", "48": "icons/48.png", "128": "icons/128.png" },
+  "content_security_policy": { "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'" }
+}

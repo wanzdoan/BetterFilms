@@ -1,0 +1,15 @@
+{
+  "name": "betterfilms-browser-extension",
+  "version": "1.1.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules --test tests/*.test.js",
+    "check": "node tools/check.js",
+    "package": "python tools/package.py"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0",
+    "sharp": "^0.35.5"
+  }
+}
