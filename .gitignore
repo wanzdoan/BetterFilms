@@ -8,6 +8,7 @@ __pycache__/
 .taste-skill/
 research/*.html
 research/phimhdcss/
+research/chophim-cfd/
 .local-keys/
 *.pem
 *.key

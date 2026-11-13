@@ -143,7 +143,7 @@
       set: value => { config = value; },
     }); } catch { /* Generic overlay, window.open and navigation guards remain active. */ }
   }
-  if (location.hostname === 'chophim.lol' || location.hostname.endsWith('.chophim.lol')) {
+  if (api.chophimHost) {
     try { localStorage.setItem('chophim:popunder-last-shown', String(Date.now())); } catch {}
   }
 })();

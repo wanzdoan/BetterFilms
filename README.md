@@ -20,6 +20,8 @@ Danh sách ban đầu trống. Quyền website được cấp khi cài; thêm t�
 
 **Cập nhật:** chép file mới vào đúng thư mục extension cũ rồi bấm **Reload** để giữ danh sách website. Sau đó tải lại trang phim.
 
+Website đổi tên miền thì cần thêm tên miền mới vào danh sách. Bản 1.2.1 hỗ trợ Chophim tại `chophim.cfd`; mục `chophim.lol` không tự áp dụng sang miền mới.
+
 **Giữ để phát 2×:** khi phim đang phát toàn màn hình, giữ trên vùng video khoảng 350 ms để phát 2×; thả tay để trở về tốc độ trước đó. Có thể tắt tính năng trong popup. Chạm nhanh, thanh tua và nút điều khiển được giữ nguyên. Hoạt động khi trình phát web chuyển sự kiện chạm tới trang; trình phát toàn màn hình riêng của hệ điều hành có thể không hỗ trợ.
 
 ## Lưu ý

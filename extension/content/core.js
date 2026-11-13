@@ -7,6 +7,7 @@
     createEvent: window.Event,
   };
   const state = { active: true, navigation: false, video: false, holdSpeed: false };
+  const chophimHost = ['chophim.lol', 'chophim.cfd'].some(host => location.hostname === host || location.hostname.endsWith(`.${host}`));
   const onUpdate = new Set();
   const update = config => {
     for (const k of ['active', 'navigation', 'video', 'holdSpeed']) if (typeof config?.[k] === 'boolean') state[k] = config[k];
@@ -32,6 +33,6 @@
     const transparent = Number(css.opacity) === 0 || ['transparent', 'rgba(0, 0, 0, 0)', ''].includes(css.backgroundColor);
     return huge && empty && transparent && ['fixed', 'absolute'].includes(css.position) && Number(css.zIndex) >= 10000;
   };
-  const api = { native, state, update, onUpdate, toURL, sameSite, listen, visible, trap };
+  const api = { native, state, update, onUpdate, toURL, sameSite, listen, visible, trap, chophimHost };
   Object.defineProperty(globalThis, '__stillShieldV1', { value: api, configurable: true });
 })();

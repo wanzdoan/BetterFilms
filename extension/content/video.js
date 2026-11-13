@@ -5,7 +5,7 @@
   api.videoInstalled = true;
   api.state.video = true;
   const { state, listen, native, visible, toURL } = api;
-  const chophim = location.hostname === 'chophim.lol' || location.hostname.endsWith('.chophim.lol');
+  const chophim = api.chophimHost;
   const tvcSelector = '[role="link"][aria-label="Tiếp tục xem trong tab mới"]';
   function watchURL(value) {
     const u = toURL(value);
@@ -31,10 +31,16 @@
   const clicked = new WeakMap();
   function sweep() {
     if (!state.active || !state.video) return;
-    if (chophim) for (const root of document.querySelectorAll(tvcSelector)) {
+    for (const root of document.querySelectorAll(tvcSelector)) {
+      // Known domains support eager tvc=1 navigation. A migrated domain may
+      // still be recognized by the exact TVC component and its TVC sound control.
+      if (!chophim && !root.querySelector('button[aria-label="Bật tiếng TVC"],button[aria-label="Tắt tiếng TVC"]')) continue;
       const video = root.querySelector('video');
-      if (!video || (attempts.get(video) || 0) >= 8) continue;
-      attempts.set(video, (attempts.get(video) || 0) + 1);
+      const now = Date.now();
+      if (!video || now - (attempts.get(video) ?? -Infinity) < 700) continue;
+      // Retry across delayed hydration, rather than exhausting a counter on
+      // an early burst of mutations before React has attached onEnded.
+      attempts.set(video, now);
       video.muted = true;
       video.pause();
       video.dispatchEvent(new native.createEvent('ended'));
