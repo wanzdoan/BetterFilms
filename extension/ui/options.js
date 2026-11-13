@@ -8,7 +8,7 @@ async function update(site, patch) {
 function toggle(site, key, title, description) {
   const label = text('label', '', 'switch-row'), words = document.createElement('span');
   words.append(text('strong', title), text('span', description, 'small muted'));
-  const input = document.createElement('input'); input.type = 'checkbox'; input.className = 'switch'; input.setAttribute('role', 'switch'); input.checked = site[key]; input.disabled = !site.granted;
+  const input = document.createElement('input'); input.type = 'checkbox'; input.className = 'switch'; input.setAttribute('role', 'switch'); input.checked = key === 'holdSpeed' ? site[key] !== false : site[key]; input.disabled = !site.granted;
   input.addEventListener('change', () => update(site, { [key]: input.checked })); label.append(words, input); return label;
 }
 function row(site) {
@@ -21,7 +21,7 @@ function row(site) {
   actions.append(enabled, remove); heading.append(identity, actions); el.append(heading);
   const details = document.createElement('details'), summary = text('summary', 'Thiết lập cho website'), settings = text('div', '', 'site-settings');
   details.dataset.host = site.host;
-  settings.append(toggle(site, 'navigation', 'Chặn nhảy tab', ''), toggle(site, 'video', 'Bỏ qua TVC', ''));
+  settings.append(toggle(site, 'navigation', 'Chặn nhảy tab', ''), toggle(site, 'video', 'Bỏ qua TVC', ''), toggle(site, 'holdSpeed', 'Giữ để phát 2×', ''));
   details.append(summary, settings); el.append(details);
   if (!site.granted) {
     el.append(text('p', 'Bật quyền truy cập website trong cài đặt trình duyệt.', 'small muted'));

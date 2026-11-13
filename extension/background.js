@@ -18,7 +18,9 @@ const serial = operation => {
   queue = result.catch(() => {});
   return result;
 };
-async function readSites() { return (await chrome.storage.local.get({ sites: [] })).sites; }
+async function readSites() {
+  return (await chrome.storage.local.get({ sites: [] })).sites.map(site => ({ ...DEFAULTS, ...site }));
+}
 async function usableSites(sites) {
   return Promise.all(sites.map(async s => ({ ...s, granted: await chrome.permissions.contains({ origins: originsFor(s.host) }) })));
 }
@@ -40,7 +42,7 @@ async function applyLive(previous, next) {
       await chrome.scripting.executeScript({ target: { tabId: tab.id, allFrames: true }, world: 'MAIN',
         func: entries => {
           const config = [...entries].sort((a, b) => b.host.length - a.host.length).find(s => location.hostname === s.host || location.hostname.endsWith(`.${s.host}`));
-          globalThis.__stillShieldV1?.update({ active: !!config?.enabled, navigation: !!config?.navigation, video: !!config?.video });
+          globalThis.__stillShieldV1?.update({ active: !!config?.enabled, navigation: !!config?.navigation, video: !!config?.video, holdSpeed: config?.holdSpeed !== false });
         }, args: [next] });
     } catch { /* Closed tab, restricted frame, or permission already revoked. Reload completes application. */ }
   }
@@ -86,7 +88,7 @@ async function handle(message, sender) {
       const host = normalizeHost(message.host);
       if (!sites.some(s => s.host === host)) throw new Error('Không tìm thấy tên miền.');
       const patch = {};
-      for (const key of ['enabled', 'navigation', 'video']) if (typeof message.patch?.[key] === 'boolean') patch[key] = message.patch[key];
+      for (const key of ['enabled', 'navigation', 'video', 'holdSpeed']) if (typeof message.patch?.[key] === 'boolean') patch[key] = message.patch[key];
       await commit(sites, sites.map(s => s.host === host ? { ...s, ...patch } : s));
     } else if (message?.type === 'REMOVE_SITE') {
       const host = normalizeHost(message.host);

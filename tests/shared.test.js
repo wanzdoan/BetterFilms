@@ -33,8 +33,12 @@ test('DNR protects main navigation only, scoped to selected initiators', () => {
   }
 });
 test('only enabled features are registered, early and in correct worlds', () => {
-  const [main, bridge] = registrationsFor([site('mflix.store', { video: false })]);
+  const [main, bridge] = registrationsFor([site('mflix.store', { video: false, holdSpeed: false })]);
   assert.equal(main.world, 'MAIN'); assert.equal(bridge.world, 'ISOLATED');
   assert.equal(main.runAt, 'document_start'); assert(main.persistAcrossSessions); assert(main.allFrames);
   assert.deepEqual(main.js, ['content/core.js', 'content/navigation.js']);
+});
+test('hold-speed is independently enabled for existing sites and can be disabled', () => {
+  assert(registrationsFor([site('mflix.store', { video: false })])[0].js.includes('content/hold-speed.js'));
+  assert(!registrationsFor([site('mflix.store', { holdSpeed: false })])[0].js.includes('content/hold-speed.js'));
 });

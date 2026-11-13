@@ -83,3 +83,14 @@ test('fallback closes unsolicited tabs from protected sites but permits a record
   await onTarget({ sourceTabId: 7, tabId: 13, url: 'https://other.test/' });
   assert(!m.calls.some(c => c[0] === 'close-tab' && c[1] === 13));
 });
+test('existing sites receive hold-speed by default and its switch persists independently of ad skipping', async () => {
+  const m = mockChrome([{ host: 'mflix.store', enabled: true, navigation: true, video: false }]);
+  await worker(m); await m.chrome.permissions.request({ origins: originsFor('mflix.store') });
+  m.chrome.runtime.onStartup.emit(); await tick();
+  assert(m.scripts[0].js.includes('content/hold-speed.js'));
+  assert(!m.scripts[0].js.includes('content/video.js'));
+  const result = await m.request({ type: 'GET_STATE' }); assert.equal(result.sites[0].holdSpeed, true);
+  await m.request({ type: 'UPDATE_SITE', host: 'mflix.store', patch: { holdSpeed: false } });
+  assert.equal(m.db.sites[0].holdSpeed, false);
+  assert(!m.scripts[0].js.includes('content/hold-speed.js'));
+});

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "BetterFilms",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Chặn tab tự bật, chuyển hướng cướp click và bỏ qua TVC trên các website bạn chọn. Danh sách ban đầu trống.",
   "minimum_chrome_version": "120",
   "permissions": ["storage", "scripting", "activeTab", "declarativeNetRequest", "webNavigation"],

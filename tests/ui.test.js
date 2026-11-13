@@ -36,6 +36,12 @@ test('popup toggles pause/video and reload control remains explicit', async t =>
   p.$('pause-current').click(); await tick(); assert.equal(p.m.db.sites[0].enabled, false); assert.equal(p.$('video').disabled, true);
   p.$('reload-current').click(); assert(p.m.calls.some(c => c[0] === 'reload'));
 });
+test('the hold-to-speed switch defaults on for existing sites and persists its own setting', async t => {
+  const p = ui('popup', [site]); t.after(() => p.dom.window.close()); await runModule(p.dom, 'extension/ui/popup.js');
+  assert.equal(p.$('holdSpeed').checked, true);
+  p.$('holdSpeed').checked = false; p.$('holdSpeed').dispatchEvent(new p.w.Event('change')); await tick();
+  assert.equal(p.m.db.sites[0].holdSpeed, false); assert.equal(p.m.db.sites[0].video, true);
+});
 test('manual URL entry normalizes host and unsupported browser pages do not offer current-site add', async t => {
   const p = ui('popup', [], 'chrome://extensions/'); t.after(() => p.dom.window.close()); await runModule(p.dom, 'extension/ui/popup.js');
   assert.equal(p.$('add-current').disabled, true);

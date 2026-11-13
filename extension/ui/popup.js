@@ -16,7 +16,7 @@ function render() {
   $('site-actions').hidden = !current?.granted;
   $('pause-current').textContent = current?.enabled ? 'Tạm dừng' : 'Tiếp tục';
   $('protections').hidden = !current;
-  for (const key of ['navigation', 'video']) { $(key).checked = !!current?.[key]; $(key).disabled = !active; }
+  for (const key of ['navigation', 'video', 'holdSpeed']) { $(key).checked = key === 'holdSpeed' ? current?.holdSpeed !== false : !!current?.[key]; $(key).disabled = !active; }
   $('site-count').textContent = String(sites.length);
 }
 async function load() { sites = (await send({ type: 'GET_STATE' })).sites; render(); }
@@ -37,7 +37,7 @@ $('pause-current').addEventListener('click', async () => {
   catch (error) { notice(error.message, true); }
 });
 $('reload-current').addEventListener('click', () => chrome.tabs.reload(tab.id));
-for (const key of ['navigation', 'video']) $(key).addEventListener('change', async () => {
+for (const key of ['navigation', 'video', 'holdSpeed']) $(key).addEventListener('change', async () => {
   try { await send({ type: 'UPDATE_SITE', host: current.host, patch: { [key]: $(key).checked } }); await load(); notice('Đã lưu. Tải lại trang để áp dụng.'); }
   catch (error) { notice(error.message, true); render(); }
 });

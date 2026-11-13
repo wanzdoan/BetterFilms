@@ -1,5 +1,5 @@
 export const MAX_SITES = 100;
-export const DEFAULTS = Object.freeze({ enabled: true, navigation: true, video: true });
+export const DEFAULTS = Object.freeze({ enabled: true, navigation: true, video: true, holdSpeed: true });
 
 export function normalizeHost(input) {
   let text = String(input ?? '').trim();
@@ -38,6 +38,7 @@ export function registrationsFor(sites) {
     const files = ['content/core.js'];
     if (site.navigation) files.push('content/navigation.js');
     if (site.video) files.push('content/video.js');
+    if (site.holdSpeed !== false) files.push('content/hold-speed.js');
     return [{ ...base, id: `still-main-${index}`, world: 'MAIN', js: files },
       { ...base, id: `still-bridge-${index}`, world: 'ISOLATED', js: ['content/bridge.js'] }];
   });

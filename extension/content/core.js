@@ -6,10 +6,10 @@
     source: Function.prototype.toString, open: window.open, setTimeout: window.setTimeout.bind(window),
     createEvent: window.Event,
   };
-  const state = { active: true, navigation: false, video: false };
+  const state = { active: true, navigation: false, video: false, holdSpeed: false };
   const onUpdate = new Set();
   const update = config => {
-    for (const k of ['active', 'navigation', 'video']) if (typeof config?.[k] === 'boolean') state[k] = config[k];
+    for (const k of ['active', 'navigation', 'video', 'holdSpeed']) if (typeof config?.[k] === 'boolean') state[k] = config[k];
     for (const fn of onUpdate) fn();
   };
   const toURL = value => { try { return new URL(String(value), location.href); } catch { return null; } };
