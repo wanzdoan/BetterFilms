@@ -7,7 +7,7 @@ import { originsFor } from '../extension/shared.js';
 import fs from 'node:fs';
 import path from 'node:path';
 async function worker(mock) {
-  const context = vm.createContext({ chrome: mock.chrome, URL, console });
+  const context = vm.createContext({ chrome: mock.chrome, URL, console, setTimeout, clearTimeout });
   const modules = new Map();
   const load = async file => {
     if (modules.has(file)) return modules.get(file);
@@ -25,7 +25,7 @@ test('add respects browser host access and reloads only the matching current tab
   let result = await m.request({ type: 'ADD_SITE', host: 'mflix.store', tabId: 7 }); assert.equal(result.ok, false); assert.equal(m.db.sites.length, 0);
   await m.chrome.permissions.request({ origins: originsFor('mflix.store') });
   result = await m.request({ type: 'ADD_SITE', host: 'https://mflix.store/', tabId: 7 }); assert.equal(result.ok, true);
-  assert.equal(m.db.sites[0].host, 'mflix.store'); assert.equal(m.scripts.length, 2); assert.equal(m.rules.length, 1); assert(m.calls.some(c => c[0] === 'reload' && c[1] === 7));
+  assert.equal(m.db.sites[0].host, 'mflix.store'); assert.equal(m.scripts.length, 2); assert.equal(m.rules.length, 2); assert(m.calls.some(c => c[0] === 'reload' && c[1] === 7));
   assert(m.scripts.every(s => s.matches.every(pattern => pattern.includes('mflix.store'))));
 });
 test('pause removes injections/rules, resume restores, video toggle changes file list', async () => {
@@ -33,7 +33,7 @@ test('pause removes injections/rules, resume restores, video toggle changes file
   assert((await m.request({ type: 'UPDATE_SITE', host: 'mflix.store', patch: { enabled: false } })).ok);
   assert.equal(m.scripts.length, 0); assert.equal(m.rules.length, 0);
   await m.request({ type: 'UPDATE_SITE', host: 'mflix.store', patch: { enabled: true, video: false } });
-  assert.equal(m.scripts.length, 2); assert(!m.scripts[0].js.includes('content/video.js')); assert.equal(m.rules.length, 1);
+  assert.equal(m.scripts.length, 2); assert(!m.scripts[0].js.includes('content/video.js')); assert.equal(m.rules.length, 2);
 });
 test('remove clears site, rules and registrations while preserving the install-time host grant', async () => {
   const m = mockChrome(); await worker(m); await m.chrome.permissions.request({ origins: originsFor('mflix.store') }); await m.request({ type: 'ADD_SITE', host: 'mflix.store' });
@@ -58,7 +58,7 @@ test('direct user link relay uses extension navigation and validates scheme and 
 });
 test('restart restores scoped registrations without duplicating them; revoked permission disables runtime', async () => {
   const m = mockChrome(); await worker(m); await m.chrome.permissions.request({ origins: originsFor('mflix.store') }); await m.request({ type: 'ADD_SITE', host: 'mflix.store' });
-  m.chrome.runtime.onStartup.emit(); await tick(); assert.equal(m.scripts.length, 2); assert.equal(m.rules.length, 1);
+  m.chrome.runtime.onStartup.emit(); await tick(); assert.equal(m.scripts.length, 2); assert.equal(m.rules.length, 2);
   m.granted.clear(); m.chrome.permissions.onRemoved.emit({}); await tick(); assert.equal(m.scripts.length, 0); assert.equal(m.rules.length, 0);
   const result = await m.request({ type: 'GET_STATE' }); assert.equal(result.sites[0].granted, false);
 });

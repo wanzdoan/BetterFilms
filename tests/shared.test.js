@@ -24,11 +24,11 @@ test('site boundaries resist suffix confusion and prefer explicit child settings
 });
 test('DNR protects main navigation only, scoped to selected initiators', () => {
   const rules = rulesFor([site('mflix.store'), site('chophim.lol'), site('paused.test', { enabled: false }), site('video.test', { navigation: false })]);
-  assert.equal(rules.length, 2);
-  for (const rule of rules) {
+  assert.equal(rules.length, 4);
+  for (const rule of rules.filter(rule => rule.action.type === 'block')) {
     assert.deepEqual(rule.condition.resourceTypes, ['main_frame']);
     assert.equal(rule.action.type, 'block');
-    assert.deepEqual(rule.condition.excludedRequestDomains, rule.condition.initiatorDomains);
+    assert.deepEqual(rule.condition.excludedRequestDomains, [...rule.condition.initiatorDomains, 'accounts.google.com']);
     assert(!('excludedInitiatorDomains' in rule.condition));
   }
 });
@@ -36,7 +36,7 @@ test('only enabled features are registered, early and in correct worlds', () => 
   const [main, bridge] = registrationsFor([site('mflix.store', { video: false, holdSpeed: false })]);
   assert.equal(main.world, 'MAIN'); assert.equal(bridge.world, 'ISOLATED');
   assert.equal(main.runAt, 'document_start'); assert(main.persistAcrossSessions); assert(main.allFrames);
-  assert.deepEqual(main.js, ['content/core.js', 'content/navigation.js']);
+  assert.deepEqual(main.js, ['auth-policy.js', 'content/core.js', 'content/navigation.js']);
 });
 test('hold-speed is independently enabled for existing sites and can be disabled', () => {
   assert(registrationsFor([site('mflix.store', { video: false })])[0].js.includes('content/hold-speed.js'));

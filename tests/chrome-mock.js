@@ -19,8 +19,8 @@ export function mockChrome(initial = []) {
       async executeScript(params) { calls.push(['execute', params]); return []; },
     },
     declarativeNetRequest: { async getDynamicRules() { return structuredClone(rules); }, async updateDynamicRules({ removeRuleIds, addRules }) { calls.push(['dnr', addRules]); for (let i = rules.length - 1; i >= 0; i--) if (removeRuleIds.includes(rules[i].id)) rules.splice(i, 1); rules.push(...structuredClone(addRules)); } },
-    tabs: { async query(query) { return query?.active ? [tabs[0]] : structuredClone(tabs); }, async get(id) { return structuredClone(tabs.find(t => t.id === id)); }, async reload(id) { calls.push(['reload', id]); }, async create(params) { calls.push(['create-tab', params]); }, async update(id, params) { calls.push(['update-tab', id, params]); } },
-    webNavigation: { onCreatedNavigationTarget: event() },
+    tabs: { async query(query) { return query?.active ? [tabs[0]] : structuredClone(tabs); }, async get(id) { return structuredClone(tabs.find(t => t.id === id)); }, async reload(id) { calls.push(['reload', id]); }, async create(params) { calls.push(['create-tab', params]); }, async update(id, params) { calls.push(['update-tab', id, params]); }, onUpdated: event(), onRemoved: event() },
+    webNavigation: { onCreatedNavigationTarget: event(), async getFrame() { return null; } },
     runtime: { getURL(file) { return `chrome-extension://still-test/${file}`; }, onMessage, onInstalled, onStartup, async openOptionsPage() { calls.push(['options']); } },
   };
   const uiSender = { url: chrome.runtime.getURL('ui/popup.html') };

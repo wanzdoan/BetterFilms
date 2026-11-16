@@ -19,7 +19,10 @@ export function page(url = 'https://cinema.test/', html = '<!doctype html><body>
   w.navigation = new w.EventTarget();
   let opens = 0;
   w.open = () => { opens++; return null; };
-  return { dom, w, errors, get opens() { return opens; }, load(...files) { for (const file of files) w.eval(read(`extension/content/${file}.js`)); } };
+  return { dom, w, errors, get opens() { return opens; }, load(...files) {
+    if (!w.__betterFilmsAuthPolicy) w.eval(read('extension/auth-policy.js'));
+    for (const file of files) w.eval(read(`extension/content/${file}.js`));
+  } };
 }
 export function click(w, el) {
   const e = new w.MouseEvent('click', { bubbles: true, cancelable: true, button: 0 }); el.dispatchEvent(e); return e;

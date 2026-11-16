@@ -1,3 +1,5 @@
+import './auth-policy.js';
+export const authPolicy = globalThis.__betterFilmsAuthPolicy;
 export const MAX_SITES = 100;
 export const DEFAULTS = Object.freeze({ enabled: true, navigation: true, video: true, holdSpeed: true });
 
@@ -35,21 +37,28 @@ export function registrationsFor(sites) {
     const childExclusions = sites.filter(s => s.host !== site.host && matchesHost(s.host, site.host)).flatMap(s => originsFor(s.host));
     const base = { matches: originsFor(site.host), excludeMatches: childExclusions,
       allFrames: true, matchOriginAsFallback: true, runAt: 'document_start', persistAcrossSessions: true };
-    const files = ['content/core.js'];
+    const files = ['auth-policy.js', 'content/core.js'];
     if (site.navigation) files.push('content/navigation.js');
     if (site.video) files.push('content/video.js');
     if (site.holdSpeed !== false) files.push('content/hold-speed.js');
     return [{ ...base, id: `still-main-${index}`, world: 'MAIN', js: files },
-      { ...base, id: `still-bridge-${index}`, world: 'ISOLATED', js: ['content/bridge.js'] }];
+      { ...base, id: `still-bridge-${index}`, world: 'ISOLATED', js: ['auth-policy.js', 'content/bridge.js'] }];
   });
 }
 export function rulesFor(sites) {
-  return activeSites(sites).filter(s => s.navigation).map((site, index) => ({
+  return activeSites(sites).filter(s => s.navigation).flatMap((site, index) => {
+    const excluded = sites.filter(s => s.host !== site.host && matchesHost(s.host, site.host)).map(s => s.host);
+    return [{
     id: index + 1, priority: 1, action: { type: 'block' },
     condition: { initiatorDomains: [site.host],
       ...(sites.some(s => s.host !== site.host && matchesHost(s.host, site.host)) ? {
         excludedInitiatorDomains: sites.filter(s => s.host !== site.host && matchesHost(s.host, site.host)).map(s => s.host),
       } : {}),
-      excludedRequestDomains: [site.host], resourceTypes: ['main_frame'], regexFilter: '^https?://' },
-  }));
+      excludedRequestDomains: [site.host, 'accounts.google.com'], resourceTypes: ['main_frame'], regexFilter: '^https?://' },
+    }, {
+      id: 10001 + index, priority: 2, action: { type: 'allow' },
+      condition: { initiatorDomains: [site.host], ...(excluded.length ? { excludedInitiatorDomains: excluded } : {}),
+        resourceTypes: ['main_frame'], regexFilter: authPolicy.firebaseRule },
+    }];
+  });
 }

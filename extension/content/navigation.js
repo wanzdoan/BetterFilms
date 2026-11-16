@@ -4,7 +4,7 @@
   if (!api || api.navigationInstalled) return;
   api.navigationInstalled = true;
   api.state.navigation = true;
-  const { native, state, listen, toURL, sameSite, trap } = api;
+  const { native, state, listen, toURL, sameSite, trap, auth } = api;
   const enabled = () => state.active && state.navigation;
   const overlays = new Map();
   function neutralize(el) {
@@ -78,11 +78,38 @@
       });
     }
   }
+  let googleClickUntil = 0;
+  let blankAvailable = false;
+  const userIntent = () => navigator.userActivation?.isActive === true || Date.now() < googleClickUntil;
+  const authSource = () => {
+    if (location.href === 'about:blank' && typeof window.__betterFilmsGoogleAuthSource === 'string') return window.__betterFilmsGoogleAuthSource;
+    return location.href;
+  };
+  listen(window, 'click', event => {
+    if (!enabled() || !event.isTrusted || event.button !== 0) return;
+    const el = event.composedPath().find(n => n instanceof Element);
+    if (!el || !auth.googleControl(el) || !api.visible(el) || trap(el)) return;
+    googleClickUntil = Date.now() + 8000;
+    blankAvailable = true;
+  }, true);
   const guardedOpen = function (...args) {
     if (enabled()) {
       const value = String(args[0] ?? '').trim();
       const destination = value ? toURL(value) : null;
       const target = String(args[1] || '_blank').toLowerCase();
+      // Preserve the actual WindowProxy, name, features and opener used by OAuth.
+      // An arbitrary blank popup is still rejected; only one login bootstrap
+      // follows a real Google sign-in control click.
+      const googleAuth = destination && auth.isStart(destination.href, authSource()) && userIntent();
+      const loginBootstrap = (!value || value === 'about:blank') && Date.now() < googleClickUntil && blankAvailable;
+      if (googleAuth || loginBootstrap) {
+        blankAvailable = false;
+        const popup = Reflect.apply(native.open, this, args);
+        if (loginBootstrap && popup) {
+          try { popup.__betterFilmsGoogleAuthSource = location.origin; } catch {}
+        }
+        return popup;
+      }
       // Some episode lists remove href, then navigate with open(url, '_self').
       // This is same-tab navigation, not a popup. Keep outside destinations blocked.
       if (target !== '_self' || !destination || !['http:', 'https:'].includes(destination.protocol) || !sameSite(destination.href)) return null;
@@ -113,7 +140,12 @@
   if (window.navigation) listen(window.navigation, 'navigate', event => {
     if (!enabled() || event.navigationType === 'traverse' || !event.cancelable) return;
     const u = toURL(event.destination?.url);
-    if (u && ['http:', 'https:'].includes(u.protocol) && !sameSite(u.href)) event.preventDefault();
+    const source = authSource();
+    const bootstrap = location.href === 'about:blank' && source !== location.href;
+    const currentKind = auth.kind(location.href, location.href);
+    const authContinuation = (bootstrap || ['local', 'firebase'].includes(currentKind)) &&
+      (auth.googleAccountURL(u?.href) || auth.isStart(u?.href, source));
+    if (u && ['http:', 'https:'].includes(u.protocol) && !sameSite(u.href) && !authContinuation && !(userIntent() && auth.isStart(u.href, source))) event.preventDefault();
   });
   function sweep() {
     if (!enabled()) return;

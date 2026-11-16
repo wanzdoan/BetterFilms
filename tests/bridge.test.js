@@ -36,3 +36,9 @@ test('empty/giant overlay links and paused sites never get a navigation relay', 
   p.a.textContent = 'ad'; p.a.style.cssText = 'position:fixed;width:100%;height:100%;'; assert.equal(p.invoke().prevented, false); assert.equal(p.m.calls.length, 0);
   p.m.db.sites[0].enabled = false; p.m.chrome.storage.onChanged.emit({ sites: {} }, 'local'); await tick(); p.a.style.cssText = ''; assert.equal(p.invoke().prevented, false); assert.equal(p.m.calls.length, 0);
 });
+test('Google auth links retain native navigation and opener rather than being relayed through tabs.create', async t => {
+  const p = await setup(t); p.a.href = 'https://accounts.google.com/gsi/select?client_id=123.apps.googleusercontent.com'; p.a.textContent = 'Đăng nhập Google'; p.a.target = '_blank';
+  assert.equal(p.invoke().prevented, false);
+  assert.equal(p.m.calls[0][1].type, 'GOOGLE_AUTH_INTENT');
+  assert(!p.m.calls.some(c => c[1]?.type === 'OPEN_LINK'));
+});

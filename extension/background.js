@@ -1,7 +1,27 @@
-import { DEFAULTS, MAX_SITES, normalizeHost, originsFor, findSite, registrationsFor, rulesFor } from './shared.js';
+import { DEFAULTS, MAX_SITES, normalizeHost, originsFor, findSite, registrationsFor, rulesFor, authPolicy } from './shared.js';
 
 let queue = Promise.resolve();
 const linkIntents = [];
+const googleIntents = new Map();
+const authBootstraps = new Map();
+function clearBootstrap(tabId) {
+  const item = authBootstraps.get(tabId);
+  if (item) clearTimeout(item.timer);
+  authBootstraps.delete(tabId);
+  return item;
+}
+function trackAuthBootstrap(tabId, source) {
+  clearBootstrap(tabId);
+  const timer = setTimeout(async () => {
+    if (!clearBootstrap(tabId)) return;
+    try {
+      const tab = await chrome.tabs.get(tabId);
+      const url = tab.pendingUrl || tab.url;
+      if (!authPolicy.googleAccountURL(url) && !authPolicy.isStart(url, source)) await chrome.tabs.remove(tabId);
+    } catch { /* Closed login popup. */ }
+  }, 10000);
+  authBootstraps.set(tabId, { source, timer });
+}
 function rememberLink(tabId, url) {
   const now = Date.now();
   while (linkIntents.length && linkIntents[0].until < now) linkIntents.shift();
@@ -58,6 +78,15 @@ async function commit(previous, next) {
   }
 }
 async function handle(message, sender) {
+  if (message?.type === 'GOOGLE_AUTH_INTENT') {
+    const site = findSite(await readSites(), sender.url);
+    if (!sender.tab?.id || !site?.enabled || !site.navigation || !message.trustedClick) throw new Error('Yêu cầu không hợp lệ.');
+    const now = Date.now();
+    for (const [id, until] of googleIntents) if (until < now) googleIntents.delete(id);
+    if (googleIntents.size >= 100) googleIntents.delete(googleIntents.keys().next().value);
+    googleIntents.set(sender.tab.id, now + 8000);
+    return {};
+  }
   // Website content scripts have only this narrow, trusted-click navigation operation.
   if (message?.type === 'OPEN_LINK' || message?.type === 'LINK_INTENT') {
     const site = findSite(await readSites(), sender.url);
@@ -114,6 +143,40 @@ chrome.webNavigation.onCreatedNavigationTarget.addListener(async event => {
     if (consumeLink(event.sourceTabId, event.url)) return;
     const tab = await chrome.tabs.get(event.sourceTabId);
     const site = findSite(await readSites(), tab.url);
-    if (site?.enabled && site.navigation) await chrome.tabs.remove(event.tabId);
+    if (!site?.enabled || !site.navigation) return;
+    const source = new URL(tab.url).origin;
+    if (authPolicy.isStart(event.url, source)) { googleIntents.delete(event.sourceTabId); return; }
+    if (!event.url || event.url === 'about:blank') {
+      // Let a trusted click message reach the worker before evaluating an SDK's
+      // pre-opened blank window. Only this single target is provisionally allowed.
+      await new Promise(resolve => setTimeout(resolve, 100));
+      let widget = false;
+      if (event.sourceFrameId > 0 && chrome.webNavigation.getFrame) {
+        try {
+          const frame = await chrome.webNavigation.getFrame({ tabId: event.sourceTabId, frameId: event.sourceFrameId });
+          widget = authPolicy.googleWidget(frame?.url);
+        } catch { /* A disappeared frame does not justify keeping an unknown popup. */ }
+      }
+      const target = await chrome.tabs.get(event.tabId);
+      const destination = target?.pendingUrl || target?.url;
+      if (authPolicy.isStart(destination, source)) { googleIntents.delete(event.sourceTabId); return; }
+      const intended = (googleIntents.get(event.sourceTabId) || 0) >= Date.now();
+      if (intended || widget) {
+        googleIntents.delete(event.sourceTabId);
+        if (authPolicy.googleAccountURL(destination)) return;
+        if (!destination || destination === 'about:blank') { trackAuthBootstrap(event.tabId, source); return; }
+      }
+    }
+    await chrome.tabs.remove(event.tabId);
   } catch { /* Tab already closed or source inaccessible. */ }
 });
+chrome.tabs.onUpdated.addListener(async (tabId, change) => {
+  if (!change.url || !authBootstraps.has(tabId)) return;
+  const item = authBootstraps.get(tabId);
+  if (change.url === 'about:blank') return;
+  clearBootstrap(tabId);
+  if (!authPolicy.googleAccountURL(change.url) && !authPolicy.isStart(change.url, item.source)) {
+    try { await chrome.tabs.remove(tabId); } catch {}
+  }
+});
+chrome.tabs.onRemoved.addListener(tabId => { clearBootstrap(tabId); googleIntents.delete(tabId); });

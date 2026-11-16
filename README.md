@@ -18,6 +18,8 @@ Mở website → bấm BetterFilms → **Bảo vệ trang này**. Có thể nh�
 
 Danh sách ban đầu trống. Quyền website được cấp khi cài; thêm tên miền không hỏi lại. Banner thông thường vẫn nên dùng uBlock Origin.
 
+Tab/popup đăng nhập Google được nhận diện sẽ được giữ lại, không cần tắt bảo vệ. Ngoại lệ chỉ dành cho luồng đăng nhập Google, không mở toàn bộ popup.
+
 **Cập nhật:** chép file mới vào đúng thư mục extension cũ rồi bấm **Reload** để giữ danh sách website. Sau đó tải lại trang phim.
 
 Website đổi tên miền thì cần thêm tên miền mới vào danh sách. Bản 1.2.1 hỗ trợ Chophim tại `chophim.cfd`; mục `chophim.lol` không tự áp dụng sang miền mới.

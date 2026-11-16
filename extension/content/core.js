@@ -33,6 +33,6 @@
     const transparent = Number(css.opacity) === 0 || ['transparent', 'rgba(0, 0, 0, 0)', ''].includes(css.backgroundColor);
     return huge && empty && transparent && ['fixed', 'absolute'].includes(css.position) && Number(css.zIndex) >= 10000;
   };
-  const api = { native, state, update, onUpdate, toURL, sameSite, listen, visible, trap, chophimHost };
+  const api = { native, state, update, onUpdate, toURL, sameSite, listen, visible, trap, chophimHost, auth: globalThis.__betterFilmsAuthPolicy };
   Object.defineProperty(globalThis, '__stillShieldV1', { value: api, configurable: true });
 })();

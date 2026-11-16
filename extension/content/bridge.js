@@ -4,6 +4,7 @@
   if (globalThis.__stillBridge) return;
   globalThis.__stillBridge = true;
   let current = null;
+  const auth = globalThis.__betterFilmsAuthPolicy;
   const refresh = async () => {
     const { sites = [] } = await chrome.storage.local.get({ sites: [] });
     current = sites.sort((a, b) => b.host.length - a.host.length).find(s => location.hostname === s.host || location.hostname.endsWith(`.${s.host}`));
@@ -15,6 +16,9 @@
     if (event.type === 'auxclick' && event.button !== 1) return;
     if (event.type === 'click' && event.button !== 0) return;
     const el = event.composedPath().find(n => n instanceof Element);
+    if (event.type === 'click' && el && auth.googleControl(el) && el.getClientRects().length) {
+      chrome.runtime.sendMessage({ type: 'GOOGLE_AUTH_INTENT', trustedClick: true }).catch(() => {});
+    }
     const a = el?.closest('a[href]');
     if (!a || a.hasAttribute('download') || !a.getClientRects().length) return;
     let u;
@@ -25,6 +29,8 @@
     const meaningful = a.textContent.trim() || a.querySelector('img,svg,picture');
     const overlay = ['absolute', 'fixed'].includes(style.position) && rect.width >= innerWidth * .8 && rect.height >= innerHeight * .8;
     if (!meaningful || overlay || (style.opacity !== '' && Number(style.opacity) === 0) || style.visibility === 'hidden') return;
+    // OAuth links must retain native opener/postMessage behavior, not tabs.create.
+    if (auth.isStart(u.href, location.href)) return;
     if (event.type === 'contextmenu') {
       chrome.runtime.sendMessage({ type: 'LINK_INTENT', trustedClick: true, url: u.href }).catch(() => {});
       return;
